@@ -1,1 +1,0 @@
-val checkProgramBug : Solidity_ast.program -> unit
