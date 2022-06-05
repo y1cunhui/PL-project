@@ -84,6 +84,7 @@ let main () =
       in
         let () = 
           Solidity_bugcheck.checkProgramBug program
+      in
       ()
 
 let () =
