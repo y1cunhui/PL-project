@@ -12,6 +12,7 @@
 
 let typecheck = ref true
 let postcheck = ref true
+let bugcheck = ref true
 
 let disable_postcheck () =
   postcheck := false
@@ -81,6 +82,8 @@ let main () =
         if !typecheck && !postcheck && not !Solidity_common.for_freeton then
           Solidity_postprocess.checkProgram program
       in
+        let () = 
+          Solidity_bugcheck.checkProgramBug program
       ()
 
 let () =
