@@ -11,9 +11,12 @@ let string_of_ident id =
 
 
 let print_all_names (exp : expression) = 
+  let () = raise (ReentrancyRisk "test")
+  in
   ()
 
 type variable_env = ident list
+
 
 
 let checkFuncDef (fd : function_definition) = 
@@ -31,7 +34,7 @@ let checkFuncDef (fd : function_definition) =
             | rs :: new_rsl ->
               let () = 
                 (fun
-                  {contents;_;_} ->
+                  {contents;_} ->
                   match contents with
                   | ExpressionStatement exp -> 
                     print_all_names exp
