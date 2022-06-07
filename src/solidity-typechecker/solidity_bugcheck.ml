@@ -10,8 +10,38 @@ let string_of_ident id =
   Ident.to_string (strip id)
 
 
+let print_all_names (exp : expression) = 
+  ()
+
+type variable_env = ident list
+
+
 let checkFuncDef (fd : function_definition) = 
-  Printf.printf "%s\n" (string_of_ident fd.fun_name)
+  match fd.fun_body with
+  | Some b->
+    let empty_variable_env1 = []
+    in
+      let empty_variable_env2 = []
+      in
+        let after_transfer = ref false
+        in
+          let rec visit_statement (rsl : block) (env1 : variable_env) (env2 : variable_env) (judge : bool)= 
+            match rsl with
+            | [] -> ()
+            | rs :: new_rsl ->
+              let () = 
+                (fun
+                  {contents;_;_} ->
+                  match contents with
+                  | ExpressionStatement exp -> 
+                    print_all_names exp
+                  | _ -> ()
+                )
+              in
+              visit_statement new_rsl env1 env2 judge
+          in 
+          visit_statement b empty_variable_env1 empty_variable_env2  after_transfer
+  | None -> ()
 
 
 let rec checkPartList (pl : (contract_part node) list) =
