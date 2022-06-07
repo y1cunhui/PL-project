@@ -13,6 +13,11 @@
 open Solidity_common
 open Solidity_ast
 
+(** 0. May have bugs *)
+
+(** Raised when Reentrancy attack risk suffered *)
+exception ReentrancyRisk of string
+
 (** 1. Generic errors *)
 
 (** Raised when an internal invariant is broken *)

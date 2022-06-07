@@ -14,7 +14,6 @@ open Solidity_common
 open Solidity_ast
 
 exception ReentrancyRisk of string
-
 exception InvariantBroken of string
 exception SyntaxError of string * pos
 exception TypecheckError of string * pos
