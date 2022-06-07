@@ -1,16 +1,16 @@
 open Solidity_common
 open Solidity_ast
-(* open Solidity_checker_TYPES
+(* open Solidity_checker_TYPES *)
 (* open Solidity_visitor
 open Solidity_postcheck_utils *)
-open Solidity_exceptions *)
+open Solidity_exceptions
 
 
-let string_of_ident id =
-  Ident.to_string (strip id)
+(* let string_of_ident id =
+  Ident.to_string (strip id) *)
 
 
-let print_all_names (exp : expression) = 
+let print_all_names (_ : expression) = 
   let () = raise (ReentrancyRisk "test")
   in
   ()
@@ -26,7 +26,7 @@ let checkFuncDef (fd : function_definition) =
     in
       let empty_variable_env2 = []
       in
-        let after_transfer = ref false
+        let after_transfer = false
         in
           let rec visit_statement (rsl : block) (env1 : variable_env) (env2 : variable_env) (judge : bool)= 
             match rsl with
@@ -39,7 +39,7 @@ let checkFuncDef (fd : function_definition) =
                   | ExpressionStatement exp -> 
                     print_all_names exp
                   | _ -> ()
-                )
+                ) rs
               in
               visit_statement new_rsl env1 env2 judge
           in 
