@@ -14,4 +14,8 @@ Ocaml-solidity provides a Solidity parser and typechecker
 * Sources: https://github.com/OcamlPro/ocaml-solidity
 
 ## Reentrancy-checker
-TODO
+Running: 
+```sh
+make install
+make
+```
