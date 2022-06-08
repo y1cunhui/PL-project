@@ -10,13 +10,13 @@ contract Reentrancy {
     }
 
     function deposit(uint value) public payable {
-        require(msg.value >= value);
-        balance[msg.sender] += value;
+        if (msg.value >= value)
+            balance[msg.sender] += value;
     }
 
     function withdraw(uint num) public {
-        require(balance[msg.sender]>num);
-        payable(msg.sender).transfer(num);
+        if (balance[msg.sender]>num)
+            payable(msg.sender).transfer(num);
         balance[msg.sender] -= num;
     }
 }
