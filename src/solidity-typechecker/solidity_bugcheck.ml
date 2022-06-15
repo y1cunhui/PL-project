@@ -134,7 +134,7 @@ let rec print_env (en : variable_env) =
     let () = print_ident id
     in print_env new_en
 
-let check_reentrancy (env1 : variable_env) (env2 : variable_env) (judge : bool ref) = 
+let check_reentrancy (env1 : variable_env) (env2 : variable_env) (judge : bool ref) (fname : ident)= 
   let () = 
     Printf.printf "["
   in let () =
@@ -156,7 +156,7 @@ let check_reentrancy (env1 : variable_env) (env2 : variable_env) (judge : bool r
             | [] -> ()
             | var2 :: rest_env2 ->
               if (Ident.equal _var1.contents var2.contents) 
-                then raise (ReentrancyRisk "test")
+                then raise (ReentrancyRisk (String.concat (string_of_ident fname) ["in function ";""] ))
               else
                 matchVar2 _var1 rest_env2
           in matchVar2 var1 e2
@@ -189,6 +189,7 @@ let is_send (e : expression) : bool =
 
 
 let checkFuncDef (fd : function_definition) = 
+  let fname = fd.fun_name in
   match fd.fun_body with
   | Some b->
     let after_transfer = ref false
@@ -240,7 +241,7 @@ let checkFuncDef (fd : function_definition) =
           in 
         let (final_env1, final_env2) = 
             visit_statements b [] [] after_transfer
-        in check_reentrancy final_env1 final_env2 after_transfer
+        in check_reentrancy final_env1 final_env2 after_transfer fname
   | None -> ()
 
 
