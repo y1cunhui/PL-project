@@ -15,14 +15,8 @@ let print_ident id =
 
 type variable_env = ident list
 
-(** TODO: in env1 and env2 we need different add strategy
-  in env1 we need all variavles
-  in env2 we just consider the writes
-  need to split the two functions
-*)
+
 let rec add_var_to_env (e : expression) (env : variable_env) : variable_env= 
-  
-  let new_env = 
     match e.contents with
     | IdentifierExpression id -> 
       [id] @ env
@@ -57,8 +51,80 @@ let rec add_var_to_env (e : expression) (env : variable_env) : variable_env=
               end
             in visitTs rest_ts temp_env
         in visitTs ts env
+    | ImmediateArray ia ->
+       let rec visit_ia (_ia) (_en) = 
+        begin
+        match _ia with
+        | [] -> _en
+        | elem :: rest_ia ->
+          let temp_env = add_var_to_env elem _en
+            in visit_ia rest_ia temp_env
+        end
+        in visit_ia ia env
+    | ArraySlice (e1, e2, e3) ->
+        let temp_env1 = add_var_to_env e1 env
+        
+          in 
+          let temp_env2 = 
+           begin 
+            match e2 with
+          
+            | Some _e2 ->
+              add_var_to_env _e2 temp_env1
+            | None -> temp_env1
+          end
+          in 
+          begin
+          match e3 with
+          
+          | Some _e3 ->
+            add_var_to_env _e3 temp_env2
+          | None -> temp_env2
+          end
+    | PrefixExpression (_, e1) ->
+      add_var_to_env e1 env
+    | SuffixExpression (e1, _) ->
+      add_var_to_env e1 env
+    | BinaryExpression  (e1, _, e2) ->
+      let temp_env1 = add_var_to_env e1 env
+      in add_var_to_env e2 temp_env1
+    | IfExpression (e1, e2, e3) -> 
+      let temp_env1 = add_var_to_env e1 env
+      in 
+        let temp_env2 = add_var_to_env e2 temp_env1
+      in
+        add_var_to_env e3 temp_env2
+    | FieldExpression (e1, _) ->
+      add_var_to_env e1 env
+    | FunctionCallExpression (e1, args) ->
+      let temp_env1 = add_var_to_env e1 env
+      in 
+      begin
+      match args with
+      | ExpressionList el ->
+        let rec visit_args _args _env= 
+          begin
+          match _args with
+          | [] -> _env
+          | arg :: rest_args ->
+            let _temp_env = add_var_to_env arg _env
+            in visit_args rest_args _temp_env
+          end
+        in visit_args el temp_env1
+      | NameValueList nvl ->
+        let rec visit_args _args _env= 
+          begin
+          match _args with
+          | [] -> _env
+          | (_, v) :: rest_args ->
+            let _temp_env = add_var_to_env v _env
+            in visit_args rest_args _temp_env
+          end
+        in visit_args nvl temp_env1
+      end
     | _ -> env
-  in new_env
+  
+
 
 let rec print_env (en : variable_env) = 
   match en with 
@@ -111,16 +177,15 @@ let rec is_substring pos s1 s2 =
 
 
 let is_transfer (e : expression) : bool = 
-  (* TODO: A better transfer detect approach*)
+  
   let e_str = string_of_expression e
-  in let transfer_str = "transfer"
+  in let transfer_str = "transfer("
   in is_substring 0 transfer_str e_str
 
-(* let is_send (e : expression) : bool = 
-  (* TODO: A better transfer detect approach*)
+let is_send (e : expression) : bool = 
   let e_str = string_of_expression e
-  in let transfer_str = "send"
-  in is_substring 0 transfer_str e_str *)
+  in let transfer_str = ".send("
+  in is_substring 0 transfer_str e_str
 
 
 let checkFuncDef (fd : function_definition) = 
@@ -159,7 +224,7 @@ let checkFuncDef (fd : function_definition) =
                                   add_var_to_env else_ env1
                                   in () *)
                         | ExpressionStatement e ->
-                          if (is_transfer e) then 
+                          if ((is_transfer e) || (is_send e)) then 
                             let () = (judge := true)
                              in (env1, env2)
                           else 
