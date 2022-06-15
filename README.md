@@ -14,8 +14,15 @@ Ocaml-solidity provides a Solidity parser and typechecker
 * Sources: https://github.com/OcamlPro/ocaml-solidity
 
 ## Reentrancy-checker
-Running: 
+Build: 
 ```sh
 make install
 make
 ```
+Test:
+```sh
+./solidity-test filename
+```
+
+Reentrancy test files directory:
+    test/raw_tests/reentrancy_tests/
