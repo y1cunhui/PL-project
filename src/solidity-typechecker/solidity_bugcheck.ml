@@ -126,25 +126,25 @@ let rec add_var_to_env (e : expression) (env : variable_env) : variable_env=
   
 
 
-let rec print_env (en : variable_env) = 
+let rec _print_env (en : variable_env) = 
   match en with 
   | [] -> Printf.printf "]\n"
   | id :: new_en ->
     let () = Printf.printf "[" in
     let () = print_ident id
-    in print_env new_en
+    in _print_env new_en
 
 let check_reentrancy (env1 : variable_env) (env2 : variable_env) (judge : bool ref) (fname : ident)= 
-  let () = 
+  (* let () = 
     Printf.printf "["
   in let () =
-    print_env env1
+    _print_env env1
   in
   let () = 
     Printf.printf "["
     in
-  let () = print_env env2
-  in
+  let () = _print_env env2
+  in *)
   if (!judge) then 
     let rec matchVar1 e1 e2 = 
       match e1 with
